@@ -5,7 +5,9 @@ This is a simple to-do list application built with Django and Django REST Framew
 ## Project members
 
 Almasbekov Damir
+
 Zhamshid Kabanbay
+
 Temirkhan Adilet
 
 ## Project Structure

@@ -66,3 +66,11 @@ def tag_detail(request, pk):
     elif request.method == 'DELETE':
         tag.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def comment_list(request, todo_id):
+    comments = Comment.objects.filter(todo_id=todo_id)
+    serializer = CommentSerializer(comments, many=True)
+    return Response(serializer.data)

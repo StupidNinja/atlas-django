@@ -4,6 +4,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from .models import Todo, Category, Tag, Comment
 from .serializers import TodoSerializer, CommentSerializer, CategorySerializer, TagSerializer
+from django.db.models import Q
+from .models import TaskStatus
 
 # CBVs for Todo
 class TodoListCreateView(generics.ListCreateAPIView):
@@ -36,7 +38,7 @@ class CommentCreateView(generics.CreateAPIView):
 @permission_classes([IsAuthenticated])
 def category_list(request):
     if request.method == 'GET':
-        categories = Category.objects.filter(user=request.user)
+        categories = Category.objects.filter(Q(user=request.user) | Q(user__isnull=True))
         serializer = CategorySerializer(categories, many=True)
         return Response(serializer.data)
     elif request.method == 'POST':
@@ -66,11 +68,9 @@ def tag_detail(request, pk):
     elif request.method == 'DELETE':
         tag.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
-    
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def comment_list(request, todo_id):
-    comments = Comment.objects.filter(todo_id=todo_id)
-    serializer = CommentSerializer(comments, many=True)
-    return Response(serializer.data)
+def status_list(request):
+    statuses = TaskStatus.objects.all()
+    return Response([{'id': s.id, 'name': s.name} for s in statuses])
+
